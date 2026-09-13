@@ -520,6 +520,7 @@ milton_main(bool is_fullscreen, char* file_to_open)
     // Note: Possible crash regarding SDL_main entry point.
     // Note: Event handling, File I/O and Threading are initialized by default
     milton_log("Initializing SDL... ");
+    SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
     SDL_Init(SDL_INIT_VIDEO);
     milton_log("Done.\n");
 
