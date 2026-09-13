@@ -73,45 +73,25 @@ endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
-  find_package(OpenGL REQUIRED)
-  find_package(GTK2 2.6 REQUIRED gtk)
-  find_package(X11 REQUIRED)
-  find_library(XINPUT_LIBRARY libXi.so)
+  find_package(PkgConfig REQUIRED)
   find_package(Threads REQUIRED)
+  find_package(OpenGL REQUIRED)
+  find_package(SDL2 REQUIRED)
 
-  if(XINPUT_LIBRARY STREQUAL "XINPUT_LIBRARY-NOTFOUND")
-      message(FATAL_ERROR "Could not find libXi.so")
-  endif()
-
-  if(NOT OPENGL_FOUND)
-      message(FATAL_ERROR "Could not find OpenGl libraries")
-  endif()
-
-  if(NOT GTK2_FOUND)
-    message(FATAL_ERROR "Could not find GTK2.8 libraries")
-  endif()
-
-  if(NOT X11_FOUND)
-    message(FATAL_ERROR "Could not find X11 libraries")
-  endif()
-
-  target_include_directories(Milton PRIVATE
-    ${GTK2_INCLUDE_DIRS}
-    ${X11_INCLUDE_DIR}
-    ${SDL2DIR}/build/linux64/include/SDL2
-    ${OPENGL_INCLUDE_DIR}
-  )
+  pkg_check_modules(GTK3 REQUIRED IMPORTED_TARGET gtk+-3.0)
+  pkg_check_modules(X11 REQUIRED IMPORTED_TARGET x11)
+  pkg_check_modules(XI REQUIRED IMPORTED_TARGET xi)
 
   target_link_libraries(Milton
-    ${GTK2_LIBRARIES}
-    ${X11_LIBRARIES}
-    ${OPENGL_LIBRARIES}
-    ${XINPUT_LIBRARY}
-    ${SDL2DIR}/build/linux64/lib/libSDL2maind.a
-    ${SDL2DIR}/build/linux64/lib/libSDL2d.a
-    ${CMAKE_THREAD_LIBS_INIT}
+    PkgConfig::GTK3
+    PkgConfig::X11
+    PkgConfig::XI
+    OpenGL::OpenGL
+    OpenGL::GLX
+    SDL2::SDL2
+    Threads::Threads
     ${CMAKE_DL_LIBS}
-    )
+  )
 
 else()
   add_subdirectory(${SDL2DIR})
